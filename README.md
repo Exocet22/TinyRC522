@@ -1,6 +1,6 @@
 # TinyRC522
 
-A tiny [Arduino](https://arduino.cc/) library for managing Mifare Classic 1K S50 tags on [RC522] module.
+A tiny [Arduino](https://arduino.cc/) library for managing Mifare Classic 1K S50 tags on [RC522](https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf) module.
 The tag's data is managed as a single continuous data block for a simple use.
 
 ## Installation
