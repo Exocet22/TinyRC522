@@ -10,10 +10,32 @@
 
 
 
-// Includes
-#include <Arduino.h>
-#include <SPI.h>
-#include "TinyRC522.h"
+// Platform specific: ESP8266
+#ifdef ESP8266
+
+  // Includes
+  #include <Arduino.h>
+  #include <SPI.h>
+  #include "TinyRC522.h"
+
+#endif
+
+// Platform specific: Raspberry pi
+#ifdef __arm__
+
+  // Types
+  typedef unsigned char uint8_t;
+  typedef unsigned short uint16_t;
+  typedef unsigned int uint32_t;
+
+  // Includes
+  #include <stdio.h>
+  #include <string.h>
+  #include <wiringPi.h>
+  #include <wiringPiSPI.h>
+  #include "TinyRC522.h"
+
+#endif
 
 
 
@@ -244,6 +266,17 @@
     // Initialize attributes
     m_sda_pin=sda_pin;
     m_frequency=frequency;
+
+    // Platform specific: Raspberry pi
+    #ifdef __arm__
+
+      // Initialize GPIO
+      wiringPiSetupGpio();
+
+      // Initialize SPI bus
+      if (wiringPiSPISetup(sda_pin,frequency)<0) return;
+
+    #endif
 
     // Initialize pins
     pinMode(m_sda_pin,OUTPUT);

@@ -1,6 +1,6 @@
 {
   "name": "TinyRC522",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A tiny Arduino/Raspberry Pi library for managing Mifare Classic 1K S50 tags on RC522 module.",
   "keywords": "rc522, rc522-rfid, mfrc522",
   "repository":
@@ -16,8 +16,8 @@
     }
   ],
   "license": "MIT",
-  "frameworks": "Arduino",
-  "platforms": "Arduino, Raspberry Pi",
+  "frameworks": "*",
+  "platforms": "*",
   "export":
   {
     "include": ["src", "examples", "LICENSE.txt"]
