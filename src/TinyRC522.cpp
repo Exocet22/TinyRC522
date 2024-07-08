@@ -444,7 +444,7 @@
     if ((!buffer)||(buffer_size==0)||(bytes_in_fifo>buffer_size)) return false;
 
     // Get data from FIFO
-    spi_read_register(FIFODataReg,buffer,bytes_in_fifo,0);
+    spi_read_register(FIFODataReg,buffer,bytes_in_fifo);
     buffer_size=bytes_in_fifo;
 
     // Get valid bits in the last received byte
@@ -529,7 +529,7 @@
     // Return value
     return value;
   }
-  void RC522::spi_read_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size,uint8_t rx_align)
+  void RC522::spi_read_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size)
   {
     // Exit on wrong buffer
     if ((!buffer)||(buffer_size==0)) return;
@@ -540,26 +540,8 @@
     // Send register value
     SPI.transfer(address|0x80);
 
-    // Initialize buffer index
-    uint8_t index=0;
-
-    // Update bits position rx_align..7 in buffer[0]
-    if (rx_align)
-    {
-      // Read first byte
-      uint8_t value=SPI.transfer(address|0x80);
-
-      // Create bit mask for bit positions rxAlign..7
-      uint8_t bit_mask=(0xFF<<rx_align)&0xFF;
-
-      // Apply mask to both current value of buffer[0] and the new data in value.
-      buffer[0]=((buffer[0]&(~bit_mask)))|(value&bit_mask);
-
-      // Increment index
-      index++;
-    }
-
     // Read bytes
+    uint8_t index=0;
     while(index<(buffer_size-1)) buffer[index++]=SPI.transfer(address|0x80);
 
     // Read final byte

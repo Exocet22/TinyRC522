@@ -145,7 +145,7 @@ class RC522
 
     // SPI Read register
     uint8_t spi_read_register(uint8_t address);
-    void spi_read_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size,uint8_t rx_align);
+    void spi_read_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size);
 
     // SPI Write register
     void spi_write_register(uint8_t address,uint8_t value);
