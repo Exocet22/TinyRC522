@@ -514,41 +514,78 @@
   // Read register
   uint8_t RC522::spi_read_register(uint8_t address)
   {
-    // Select device
-    spi_select_device();
+    // Platform specific: ESP8266
+    #ifdef ESP8266
 
-    // Send address value
-    SPI.transfer(address|0x80);
+      // Select device
+      spi_select_device();
 
-    // Read returned value
-    uint8_t value=SPI.transfer(0);
+      // Send address value
+      SPI.transfer(address|0x80);
 
-    // Release device
-    spi_release_device();
+      // Read returned value
+      uint8_t value=SPI.transfer(0);
 
-    // Return value
-    return value;
+      // Release device
+      spi_release_device();
+
+      // Return value
+      return value;
+
+    #endif
+
+    // Platform specific: Raspberry pi
+    #ifdef __arm__
+
+      // Read register
+      uint8_t spi_buffer[2]={(uint8_t) (address|0x80),0x00};
+      wiringPiSPIDataRW(0,spi_buffer,2);
+
+      // Return value
+      return spi_buffer[1];
+
+    #endif
   }
   void RC522::spi_read_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size)
   {
     // Exit on wrong buffer
     if ((!buffer)||(buffer_size==0)) return;
 
-    // Select device
-    spi_select_device();
+    // Platform specific: ESP8266
+    #ifdef ESP8266
 
-    // Send register value
-    SPI.transfer(address|0x80);
+      // Select device
+      spi_select_device();
 
-    // Read bytes
-    uint8_t index=0;
-    while(index<(buffer_size-1)) buffer[index++]=SPI.transfer(address|0x80);
+      // Send register value
+      SPI.transfer(address|0x80);
 
-    // Read final byte
-    buffer[index]=SPI.transfer(0);
+      // Read bytes
+      uint8_t index=0;
+      while(index<(buffer_size-1)) buffer[index++]=SPI.transfer(address|0x80);
 
-    // Release device
-    spi_release_device();
+      // Read final byte
+      buffer[index]=SPI.transfer(0);
+
+      // Release device
+      spi_release_device();
+
+    #endif
+
+    // Platform specific: Raspberry pi
+    #ifdef __arm__
+
+      // Create SPI buffer
+      uint8_t spi_buffer[1+buffer_size];
+      memset(spi_buffer,(uint8_t) (address|0x80),1+buffer_size);
+
+      // Read SPI buffer
+      wiringPiSPIDataRW(0,spi_buffer,1+buffer_size);
+
+      // Set buffer
+      memcpy(buffer,&spi_buffer[1],buffer_size);
+
+    #endif
   }
 
 
@@ -556,34 +593,63 @@
   // Write register
   void RC522::spi_write_register(uint8_t address,uint8_t value)
   {
-    // Select device
-    spi_select_device();
+    // Platform specific: ESP8266
+    #ifdef ESP8266
 
-    // Send register value
-    SPI.transfer(address);
+      // Select device
+      spi_select_device();
 
-    // Write value
-    SPI.transfer(value);
+      // Send register value
+      SPI.transfer(address);
 
-    // Release device
-    spi_release_device();
+      // Write value
+      SPI.transfer(value);
+
+      // Release device
+      spi_release_device();
+
+    #endif
+
+    // Platform specific: Raspberry pi
+    #ifdef __arm__
+
+      // Write register
+      uint8_t spi_buffer[2]={(uint8_t) (address),value};
+      wiringPiSPIDataRW(0,spi_buffer,2);
+
+    #endif
   }
   void RC522::spi_write_register(uint8_t address,uint8_t* buffer,uint8_t buffer_size)
   {
     // Exit on empty buffer
     if (buffer_size==0) return;
 
-    // Select device
-    spi_select_device();
+    // Platform specific: ESP8266
+    #ifdef ESP8266
 
-    // Send register value
-    SPI.transfer(address);
+      // Select device
+      spi_select_device();
 
-    // Write buffer
-    for(uint8_t index=0; index<buffer_size; index++) SPI.transfer(buffer[index]);
+      // Send register value
+      SPI.transfer(address);
 
-    // Release device
-    spi_release_device();
+      // Write buffer
+      for(uint8_t index=0; index<buffer_size; index++) SPI.transfer(buffer[index]);
+
+      // Release device
+      spi_release_device();
+
+    #endif
+
+    // Platform specific: Raspberry pi
+    #ifdef __arm__
+
+      // Write buffer
+      uint8_t spi_buffer[1+buffer_size]={(uint8_t) (address)};
+      memcpy(&spi_buffer[1],buffer,buffer_size);
+      wiringPiSPIDataRW(0,spi_buffer,1+buffer_size);
+
+    #endif
   }
 
 
@@ -591,6 +657,9 @@
   // SPI select/release device
   void RC522::spi_select_device()
   {
+    // Platform specific: ESP8266
+    #ifdef ESP8266
+
       // Enable SPI
       SPI.begin();
 
@@ -599,9 +668,14 @@
 
       // Select device
       digitalWrite(m_sda_pin,LOW);
+
+    #endif
   }
   void RC522::spi_release_device()
   {
+    // Platform specific: ESP8266
+    #ifdef ESP8266
+
       // Release device
       digitalWrite(m_sda_pin,HIGH);
 
@@ -610,4 +684,6 @@
 
       // Disable SPI
       SPI.end();
+
+    #endif
   }
