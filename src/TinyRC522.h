@@ -98,7 +98,10 @@ class RC522
   // Private attributes
   private:
 
-    // SDA pin
+    // SPI pins
+    uint8_t m_mosi_pin;
+    uint8_t m_miso_pin;
+    uint8_t m_sck_pin;
     uint8_t m_sda_pin;
 
     // Frequency
@@ -111,6 +114,9 @@ class RC522
 
   // Public functions
   public:
+
+    // Constructor
+    RC522(uint8_t mosi_pin=MOSI,uint8_t miso_pin=MISO,uint8_t sck_pin=SCK);
 
     // Initialize
     void initialize(uint8_t sda_pin,uint32_t frequency);

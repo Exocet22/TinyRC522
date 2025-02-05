@@ -10,8 +10,8 @@
 
 
 
-// Platform specific: ESP8266
-#ifdef ESP8266
+// Platform specific: ESP8266 or ESP32
+#if defined(ESP8266) || defined(ESP32)
 
   // Includes
   #include <Arduino.h>
@@ -21,7 +21,7 @@
 #endif
 
 // Platform specific: Raspberry pi
-#ifdef __arm__
+#if defined(__arm__)
 
   // Types
   typedef unsigned char uint8_t;
@@ -260,6 +260,14 @@
 
 // RC522 public functions
 
+  // Constructor
+  RC522::RC522(uint8_t mosi_pin,uint8_t miso_pin,uint8_t sck_pin)
+    : m_mosi_pin(mosi_pin), m_miso_pin(miso_pin), m_sck_pin(sck_pin)
+  {
+  }
+
+
+
   // Initialize
   void RC522::initialize(uint8_t sda_pin,uint32_t frequency)
   {
@@ -268,7 +276,7 @@
     m_frequency=frequency;
 
     // Platform specific: Raspberry pi
-    #ifdef __arm__
+    #if defined(__arm__)
 
       // Initialize GPIO
       wiringPiSetupGpio();
@@ -547,8 +555,8 @@
   // Read register
   uint8_t RC522::spi_read_register(uint8_t address)
   {
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Select device
       spi_select_device();
@@ -568,7 +576,7 @@
     #endif
 
     // Platform specific: Raspberry pi
-    #ifdef __arm__
+    #if defined(__arm__)
 
       // Read register
       uint8_t spi_buffer[2]={(uint8_t) (address|0x80),0x00};
@@ -584,8 +592,8 @@
     // Exit on wrong buffer
     if ((!buffer)||(buffer_size==0)) return;
 
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Select device
       spi_select_device();
@@ -606,7 +614,7 @@
     #endif
 
     // Platform specific: Raspberry pi
-    #ifdef __arm__
+    #if defined(__arm__)
 
       // Create SPI buffer
       uint8_t spi_buffer[1+buffer_size];
@@ -626,8 +634,8 @@
   // Write register
   void RC522::spi_write_register(uint8_t address,uint8_t value)
   {
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Select device
       spi_select_device();
@@ -644,7 +652,7 @@
     #endif
 
     // Platform specific: Raspberry pi
-    #ifdef __arm__
+    #if defined(__arm__)
 
       // Write register
       uint8_t spi_buffer[2]={(uint8_t) (address),value};
@@ -657,8 +665,8 @@
     // Exit on empty buffer
     if (buffer_size==0) return;
 
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Select device
       spi_select_device();
@@ -675,7 +683,7 @@
     #endif
 
     // Platform specific: Raspberry pi
-    #ifdef __arm__
+    #if defined(__arm__)
 
       // Write buffer
       uint8_t spi_buffer[1+buffer_size]={(uint8_t) (address)};
@@ -690,11 +698,15 @@
   // SPI select/release device
   void RC522::spi_select_device()
   {
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Enable SPI
-      SPI.begin();
+      #if defined(ESP8266)
+        SPI.begin();
+      #else
+        SPI.begin(m_sck_pin,m_miso_pin,m_mosi_pin,m_sda_pin);
+      #endif
 
       // Start SPI transaction 
       SPI.beginTransaction(SPISettings(m_frequency,MSBFIRST,SPI_MODE0));
@@ -706,8 +718,8 @@
   }
   void RC522::spi_release_device()
   {
-    // Platform specific: ESP8266
-    #ifdef ESP8266
+    // Platform specific: ESP8266 or ESP32
+    #if defined(ESP8266) || defined(ESP32)
 
       // Release device
       digitalWrite(m_sda_pin,HIGH);
