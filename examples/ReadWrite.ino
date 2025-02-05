@@ -27,6 +27,12 @@
 
 // Constants
 
+  // SDA pin
+  #define SDA_PIN                   2
+
+  // Bus speed
+  #define BUS_SPEED                 1000000
+
   // Tag size
   #define TAG_SIZE                  64
 
@@ -63,7 +69,7 @@ void setup()
   Serial.println("****** Read/write application for TinyRC522 Library ******");
 
   // Initialize RC522 module
-  g_rc522.initialize(2,1000000);                  // SDA pin on GPIO2, 1MHz SPI bus speed
+  g_rc522.initialize(SDA_PIN,BUS_SPEED);          // SDA pin on GPIO2, 1MHz SPI bus speed
   g_rc522.set_antenna_gain(ANTENNA_GAIN_18_DB);   // Set antenna gain: 18 dB
 }
 
