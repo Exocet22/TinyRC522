@@ -11,7 +11,7 @@
 
 
 // Platform specific: ESP8266 or ESP32
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
   // Includes
   #include <Arduino.h>
@@ -556,7 +556,7 @@
   uint8_t RC522::spi_read_register(uint8_t address)
   {
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Select device
       spi_select_device();
@@ -593,7 +593,7 @@
     if ((!buffer)||(buffer_size==0)) return;
 
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Select device
       spi_select_device();
@@ -635,7 +635,7 @@
   void RC522::spi_write_register(uint8_t address,uint8_t value)
   {
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Select device
       spi_select_device();
@@ -666,7 +666,7 @@
     if (buffer_size==0) return;
 
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Select device
       spi_select_device();
@@ -699,10 +699,10 @@
   void RC522::spi_select_device()
   {
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Enable SPI
-      #if defined(ESP8266)
+      #if defined(ARDUINO_ARCH_ESP8266)
         SPI.begin();
       #else
         SPI.begin(m_sck_pin,m_miso_pin,m_mosi_pin,m_sda_pin);
@@ -719,7 +719,7 @@
   void RC522::spi_release_device()
   {
     // Platform specific: ESP8266 or ESP32
-    #if defined(ESP8266) || defined(ESP32)
+    #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
 
       // Release device
       digitalWrite(m_sda_pin,HIGH);
